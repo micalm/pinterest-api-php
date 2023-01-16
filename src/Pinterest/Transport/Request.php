@@ -93,7 +93,7 @@ class Request {
      * @param  array    $parameters
      * @return Response
      */
-    public function post($endpoint, array $parameters = array())
+    public function post($endpoint, $parameters = array())
     {
         return $this->execute("POST", sprintf("%s%s", $this->host, $endpoint), $parameters);
     }
@@ -166,7 +166,7 @@ class Request {
      * @throws CurlException
      * @throws PinterestException
      */
-    public function execute($method, $apiCall, array $parameters = array(), $headers = array())
+    public function execute($method, $apiCall, $parameters = array(), $headers = array())
     {
         // Check if the access token needs to be added
         if ($this->access_token != null) {
@@ -201,8 +201,9 @@ class Request {
             case 'POST':
                 $ch->setOptions(array(
                     CURLOPT_CUSTOMREQUEST   => "POST",
-                    CURLOPT_POST            => count($parameters),
-                    CURLOPT_POSTFIELDS      => $parameters
+                    CURLOPT_POST            => true,
+                    CURLOPT_POSTFIELDS      => $parameters,
+                    CURLINFO_HEADER_OUT     => true,
                 ));
 
                 if (!class_exists('\CURLFile') && defined('CURLOPT_SAFE_UPLOAD')) {
